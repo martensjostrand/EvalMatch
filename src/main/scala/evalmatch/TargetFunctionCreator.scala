@@ -5,7 +5,9 @@ import scalpi.targetfunction._
 
 class TargetFunctionCreator { 
   def createTargetFunction(pairs: List[EvaluationPair]): TargetFunction = { 
-    val weights = pairs.map{p => p.importance}
+    pairs.map{p=> println("Importance:" + p.importance)}
+    // val weights = pairs.map{p => p.importance}
+    val weights = pairs.map{p => 1.0}
     Maximize(weights)
   }
 }
