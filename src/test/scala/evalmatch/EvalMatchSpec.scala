@@ -10,8 +10,8 @@ class EvalMatchSpec extends Specification {
       val e2 = Employee("e2");
       val e3 = Employee("e3");
 
-      val a1 = Application(e1, List(e2, e3))
-      val a2 = Application(e2, List(e1, e3))
+      val a1 = Application(e1, List(WriterInfo(e2, 1.0), WriterInfo(e3, 1.0)))
+      val a2 = Application(e2, List(WriterInfo(e1,1.0), WriterInfo(e3,1.0)))
 
       val res = EvalMatch.findMatch(List(a1, a2))
       println(res)

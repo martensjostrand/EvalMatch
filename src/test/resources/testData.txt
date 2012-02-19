@@ -1,0 +1,3 @@
+Marten Sjostrand: Kalle Svensson, 120; Sven Karlsson, 90
+Kalle Svensson: Marten Sjostrand, 90; Sven Karlsson, 78
+Sven Karlsson: Marten Sjostrand, 90; Kalle Svensson, 67;

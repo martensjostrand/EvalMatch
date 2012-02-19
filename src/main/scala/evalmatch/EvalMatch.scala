@@ -10,10 +10,9 @@ import scalpglpk._
 object EvalMatch {
 
   // Configuration:
-  val maxToWrite = 100
+  val maxToWrite = 1
   val minToReceive = 0
   val solver = GLPKSolver
-    //DefaultProblemSolver
 
   // Building blocks:
   val pairGenerator = new PairGenerator()

@@ -14,8 +14,9 @@ class PairGenerator{
     
     def createPairsFromApplication(application: Application) = { 
       val receiver = application.receiver;
-      for(writer <- application.writers)
-      yield EvaluationPair(writer, receiver, 0.0, nextIndex)
+      for(writerInfo <- application.writerInfos)
+         yield EvaluationPair(writerInfo.writer, receiver, 
+			      writerInfo.importance, nextIndex)
     }
     
     applications.distinct.foldLeft(List[EvaluationPair]()){ 
