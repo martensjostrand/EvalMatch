@@ -33,14 +33,15 @@ class DefaultIOHandler() extends ApplicationReader with ResultWriter{
   }
   
   def write(results: List[Result], file: String): Unit = { 
+    
     def formatResult(result: Result): String = { 
       result.writer.name + ": " + result.receivers.map(_.name).mkString(", ")
     }
-
+    
     val writer = new BufferedWriter(new FileWriter(file));
 
-    for(line <- results.map(formatResult)){ 
-      writer.write(line)
+    for(result <- results; recevier <- result.receivers){ 
+      writer.write(result.writer.name + "; " + recevier.name)
       writer.newLine()
     }
     writer.close()

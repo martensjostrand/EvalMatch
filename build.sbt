@@ -17,3 +17,6 @@ resolvers ++= Seq("snapshots" at "http://scala-tools.org/repo-snapshots",
                     "releases"  at "http://scala-tools.org/repo-releases")
 
 scalacOptions ++= Seq("-deprecation", "-unchecked")
+
+mainClass := Some("evalmatch.EvalMatchRunner")
+

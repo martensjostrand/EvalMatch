@@ -11,6 +11,7 @@ import java.io.File
 class FileParserSpec extends Specification { 
   "FileParser" should { 
     val parser = new DefaultIOHandler()
+
     "Parse file" in { 
       val applications = parser.parse("src/test/resources/testData.txt")
       
@@ -29,7 +30,7 @@ class FileParserSpec extends Specification {
       parser.write(List(r1,r2) , file)
       
       val lines = Source.fromFile(file).getLines.toList
-      val expectedLines = List("e1: e2, e3","e2: e1, e3")
+      val expectedLines = List("e1; e2", "e1; e3", "e2; e1", "e2; e3");
       new File(file).delete
       lines must be equalTo expectedLines
     }

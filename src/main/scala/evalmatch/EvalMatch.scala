@@ -1,17 +1,41 @@
 package evalmatch
 
 import evalmatch.domain._
+import evalmatch.io._
 import scalpi.variable.BinaryVariable
 import scalpi.targetfunction._
 import scalpi._
 import scala.collection.immutable.HashSet
 import scalpglpk._
 
-object EvalMatch {
+object EvalMatchRunner { 
+  def main(args: Array[String]) {
+    if(args.size != 4) { 
+      println("Run with: EvalmatchRunner inputFile outputFile maxToWrite minToReceive")
+      println("Example: EvalmatchRunner /usr/me/inputFile.txt /usr/me/outputFile.txt 7 2")
+    } else { 
+      val maxToWrite = args(2).toInt
+      val minToReceive = args(3).toInt
+      println("Using maxToWrite: " + maxToWrite)
+      println("Using minToReceive: " + minToReceive)
+      println("Using applications from: " + args(0))
+      println("Writing retults to: " + args(1))
+      
+      val matcher = new EvalMatch(maxToWrite,minToReceive)
+      val iohandler = new DefaultIOHandler
+      val applications = iohandler.parse(args(0))
+      val results = matcher.findMatch(applications)
+      iohandler.write(results, args(1))
+
+    }
+  }
+}
+
+class EvalMatch(maxToWrite: Int, minToReceive: Int) {
 
   // Configuration:
-  val maxToWrite = 1
-  val minToReceive = 0
+  // val maxToWrite = 1
+  // val minToReceive = 0
   val solver = GLPKSolver
 
   // Building blocks:
@@ -23,38 +47,28 @@ object EvalMatch {
   def findMatch(applications: List[Application]): List[Result] = { 
     val pairs = pairGenerator.createPairs(applications)
     val problemDescription = createProblemDescription(pairs)
-    println("Problem description is:\n" + problemDescription)
     val solution = solver.solve(problemDescription)
-    println("Solution is:\n" + solution + "\n")
     createResultList(solution, pairs)
   }
 
   private def createResultList(solution: ProblemSolution, pairs: List[EvaluationPair]) = { 
     val trueIndexes = for((value, index) <- solution.variableValues.zipWithIndex; if value.getValue == true) yield index 
-    println("trueIndexes: " + trueIndexes);
     val acceptedPairs = trueIndexes.map(index => pairs(index))
-    println("acceptedPairs: " + acceptedPairs)
     val perWriter = acceptedPairs.groupBy(_.writer)
-    println("perWriter: " + perWriter)
     val results = for((writer, pairsByWriter) <- perWriter ) yield Result(writer, pairsByWriter.map(_.receiver)) 
-    println("results: " + results)
     results.toList
   }
 
   private def createProblemDescription(pairs: List[EvaluationPair]) = { 
-    // Create one binary variable for each pair.
     val variables = variableCreator.createVariables(pairs)
-
-    // Create a target function with the importance of each pair.
     val targetFunction = targetFunctionCreator.createTargetFunction(pairs)
-    println("target function: " + targetFunction)
+
     // Create the maxwrite and min receive constraints.
     val writeConstraints = constraintCreator.createMaxToWriteConstraints(pairs)
     val receiveConstraints = constraintCreator.createMinToReceiveConstraints(pairs)
     val constraints = writeConstraints ::: receiveConstraints
 
-    // Create and solve the problem:
+    // Create and return the problem:
     ProblemDescription(targetFunction, constraints, variables)
-    
   }
 }
